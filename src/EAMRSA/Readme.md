@@ -16,3 +16,7 @@
     * Calculate Mi by the Mi = Z<sup>d<sub>i,1</sub></sup> (mod p<sub>1</sub>)\*Z<sup>d<sub>i,2</sub></sup> (mod p<sub>2</sub>) \*......\* Z<sup>d<sub>i,k</sub></sup> (mod p<sub>k</sub>) , for 1 <= i <= b, where p<sub>i</sub> has been computed.
     * According to the Chinese Remainder Theorem, Compute y<sub>i</sub> = N / p<sub>i</sub> = p<sub>1</sub>\*p<sub>2</sub>\* ... \*p<sub>i-1</sub>\*p<sub>i+1</sub>\* ...\* p<sub>b</sub> and <br> n<sub>i</sub> = y<sub>i</sub> \* (y<sub>i</sub><sup>-1</sup> (mod p<sub>i</sub> )) , for each i, 1 <= i <= b.
     * Using the CRT to combine the M<sub>i</sub> 's to obtain  M = C<sup>d</sup> = M<sub>1</sub> \* n<sub>1</sub> + ... + M<sub>i</sub> \* n<sub>i</sub> (mod N) , for each 1 <= i <= b.
+
+**File structure:**
+
+1. main.py : The main driver code 
