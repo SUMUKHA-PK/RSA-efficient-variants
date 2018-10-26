@@ -11,4 +11,4 @@
 
 **Objective:**
 <br> 
-To implement Batch Multi Prime RSA and Encrypt Multi Prime RSA Algorithm in Python and compare the 2 algorithms with respect to speed.
+To implement <b>Batch Multi Prime RSA and Encrypt Multi Prime RSA Algorithm in Python and compare the 2 algorithms with respect to speed</b>.
