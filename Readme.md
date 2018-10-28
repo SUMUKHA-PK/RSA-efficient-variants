@@ -4,6 +4,7 @@
 1. src : All source code files
     * Batch-Multi-Prime-RSA(BMRSA): Files of the BMRSA variant of RSA
     * Encrypt-Assistant-Multi-Prime-RSA (EAMRSA) : Files of the EAMRSA variant of RSA
+    * Simple_RSA : The normal RSA algorithm implemented in python
 
 2. resources : Contains all relevant resources referred to. 
 
