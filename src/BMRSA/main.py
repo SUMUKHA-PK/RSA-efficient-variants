@@ -104,7 +104,6 @@ def generate_primes(n, b):
     primes = np.array(primes)
 
     if primes.size < b:
-        print(primes.size, b)
         print("b is too large. Change b or n")
         sys.exit(-1)
 
@@ -141,6 +140,16 @@ def generate_tree(es):
     interchange(tree)
 
     return tree
+
+
+def generate_t(tree):
+
+    i = 0
+    t = []
+    while 2*i + 2 < len(tree):
+        t.append(crt([tree[2*i+1], tree[2*i+2]], [0, 1]))
+        i += 1
+    return t
 
 
 def main():
@@ -208,6 +217,9 @@ def main():
         r += nis[i] * mps[i]
 
     tree = generate_tree(es)
+
+    ts = generate_t(tree)
+    print(ts, tree)
 
 
 if __name__ == '__main__':
