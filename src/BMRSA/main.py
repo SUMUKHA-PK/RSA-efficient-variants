@@ -219,7 +219,7 @@ def main():
     tree = generate_tree(es)
 
     ts = generate_t(tree)
-    print(ts, tree)
+    print(ts, tree, message, cs)
 
 
 if __name__ == '__main__':
