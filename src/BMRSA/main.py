@@ -101,7 +101,7 @@ def generate_primes(n, b):
         if len(primes) >= 2*b:
             break
 
-    primes = np.array(primes)
+    primes = np.array(primes, dtype=object)
 
     if primes.size < b:
         print("b is too large. Change b or n")
@@ -121,7 +121,7 @@ def interchange(tree):
         tree[i], tree[i+1] = swap(tree[i], tree[i+1])
 
 
-def generate_tree(es):
+def generate_tree_e(es):
     leaves = len(es)
     t = int(log(leaves, 2))
 
@@ -137,19 +137,44 @@ def generate_tree(es):
         tree = [tree[i] * tree[i-1], *tree]
         i -= 1
 
-    interchange(tree)
+    # interchange(tree)
 
     return tree
 
 
-def generate_t(tree):
+def generate_tree_v(vs, tree_es, n):
+    leaves = len(vs)
+    t = int(log(leaves, 2))
 
-    i = 0
-    t = []
-    while 2*i + 2 < len(tree):
-        t.append(crt([tree[2*i+1], tree[2*i+2]], [0, 1]))
-        i += 1
-    return t
+    t = 2 * (leaves - 2 ** t)
+
+    tree = [*vs[t:], *vs[:t]]
+
+    length = 2 ** (int(log(leaves, 2)) + 1) + t - 1
+
+    tree = [*[0 for _ in range(length - len(tree))], *tree]
+
+    i = len(tree) - len(vs) - 1
+
+    while i >= 0:
+        left = 2*i + 1
+        right = 2*i + 2
+        tree[i] = ((tree[left]**tree_es[right])*(tree[right]**tree_es[left])) % n
+        i -= 1
+
+    return tree
+
+
+# def generate_r(tree_es, tree_vs):
+#
+#     i = 0
+#     t = []
+#     while 2*i + 2 < len(tree):
+#         t.append(crt([tree[2*i+1], tree[2*i+2]], [0, 1]))
+#         i += 1
+#
+#     print(i)
+#     return t
 
 
 def main():
@@ -178,12 +203,16 @@ def main():
                 es.append(temp)
         temp += 1
 
-    ds = np.array([MMI(num, phi_n) for num in es])
+    ds = np.array([MMI(num, phi_n) for num in es], dtype=object)
 
-    d = np.prod(ds)
+    print(ds, es, phi_n)
+
+    d = np.prod(ds) % phi_n
 
     # private key
     ds = [(d % p) - 1 for p in primes]
+
+    print(ds, primes, d)
 
     message = generate_message(li)
 
@@ -216,10 +245,12 @@ def main():
     for i in range(len(nis)):
         r += nis[i] * mps[i]
 
-    tree = generate_tree(es)
+    tree_es = generate_tree_e(es)
+    tree_vs = generate_tree_v(vs, tree_es, n)
 
-    ts = generate_t(tree)
-    print(ts, tree, message, cs)
+    # rs = generate_r(tree_es, tree_vs)
+
+    print(tree_vs)
 
 
 if __name__ == '__main__':
