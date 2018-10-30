@@ -165,16 +165,24 @@ def generate_tree_v(vs, tree_es, n):
     return tree
 
 
-# def generate_r(tree_es, tree_vs):
-#
-#     i = 0
-#     t = []
-#     while 2*i + 2 < len(tree):
-#         t.append(crt([tree[2*i+1], tree[2*i+2]], [0, 1]))
-#         i += 1
-#
-#     print(i)
-#     return t
+def generate_r(tree_es, tree_vs, n, r):
+
+    i = 0
+    tree = [r, *[0 for _ in range(len(tree_vs)-1)]]
+
+    while 2*i + 2 < len(tree):
+        left = 2*i + 1
+        right = 2*i + 2
+        t = crt([tree_es[left], tree_es[right]], [0, 1])
+        t_l = int(t//tree_es[left])
+        t_r = int((t-1)//tree_es[right])
+        print(n, tree[i], tree_vs[left], tree_vs[right], t, t_l, t_r)
+        r_r = ((tree[i]**t)//((tree_vs[right]**t_l)*(tree_vs[left]**t_r))) % n
+        r_l = (r // r_r) % n
+        tree[left] = r_l
+        tree[right] = r_r
+        i += 1
+    return tree
 
 
 def main():
@@ -205,14 +213,11 @@ def main():
 
     ds = np.array([MMI(num, phi_n) for num in es], dtype=object)
 
-    print(ds, es, phi_n)
-
     d = np.prod(ds) % phi_n
 
     # private key
+    # Check
     ds = [(d % p) - 1 for p in primes]
-
-    print(ds, primes, d)
 
     message = generate_message(li)
 
@@ -248,9 +253,9 @@ def main():
     tree_es = generate_tree_e(es)
     tree_vs = generate_tree_v(vs, tree_es, n)
 
-    # rs = generate_r(tree_es, tree_vs)
+    tree_rs = generate_r(tree_es, tree_vs, n, r)
 
-    print(tree_vs)
+    print(tree_rs, message)
 
 
 if __name__ == '__main__':
