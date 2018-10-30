@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 from math import gcd, log
 from random import randint
