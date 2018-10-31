@@ -1,82 +1,82 @@
 import math 
+import numpy as np
+import sys
+import os
+sys.path.append((os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))))
+from check_prime import check_prime
+from inverse import multiplicative_inverse
 
-n = int(input('Enter the security parameter \'n\': '))
-b = int(input('Enter the value of parameter \'b\': '))
-k = int(input('Enter the value of parameter \'k\': '))
-c = int(input('Enter the value of parameter \'c\': '))
 
-bits_len = n//b
+# Taking user input for security parameters. These can also be defined for each test case separately
+# n = int(input('Enter the security parameter \'n\': '))
+# b = int(input('Enter the value of parameter \'b\': '))
+# k = int(input('Enter the value of parameter \'k\': '))
+# c = int(input('Enter the value of parameter \'c\': '))
 
-max_val = pow(2,bits_len)-1
+def run(n,k,b,c):
+    bits_len = n//b
 
-def check_prime(a):
-    flag=1
-    if(a==1):
-        flag=0
-    else:
-        for i in range(2,math.ceil(math.sqrt(a))+1):
-            if(a%i==0):
-                flag=0
-    return flag
+    max_val = pow(2,bits_len)-1
 
-primes_p = []
 
-for i in range(2,max_val+1):
-    if(check_prime(i)):
-        primes_p.append(i)
+    primes_p = []
 
-j = 0 
-l = len(primes_p)
+    for i in range(2,max_val+1):
+        if(check_prime(i)):
+            primes_p.append(i)
 
-while(j!=(l-b)):
-    primes_p.remove(primes_p[0])
-    j+=1
+    j = 0 
+    l = len(primes_p)
 
-print('\'b\' primes of bit length floor(n/b) are: ',end="")
-print(primes_p)
+    while(j!=(l-b)):
+        primes_p.remove(primes_p[0])
+        j+=1
 
-N = 1
+    print('\'b\' primes of bit length floor(n/b) are: ',end="")
+    print(primes_p)
 
-for i in primes_p:
-    N*=i
+    N = 1
 
-print('Product of floor(n/b) primes are: ',end="")
-print(N)
+    for i in primes_p:
+        N*=i
 
-def phi(arr):
-    N = 1 
-    for i in arr:
-        N*=(i-1)
-    return N
+    print('Product of floor(n/b) primes are: ',end="")
+    print(N)
 
-print('phi(N) = ',end="")
-print(phi(primes_p))
+    def phi(arr):
+        N = 1 
+        for i in arr:
+            N*=(i-1)
+        return N
 
-e = 65537
+    print('phi(N) = ',end="")
+    print(phi(primes_p))
 
-def multiplicative_inverse(e, phi):
-    d = 0
-    x1 = 0
-    x2 = 1
-    y1 = 1
-    temp_phi = phi
-    
-    while e > 0:
-        temp1 = temp_phi/e
-        temp2 = temp_phi - temp1 * e
-        temp_phi = e
-        e = temp2
-        
-        x = x2- temp1* x1
-        y = d - temp1 * y1
-        
-        x2 = x1
-        x1 = x
-        d = y1
-        y1 = y
-    return d + phi
+    E = 65537
 
-d = multiplicative_inverse(e,phi(primes_p))
+    d = multiplicative_inverse(E,phi(primes_p))
 
-print('Value of d is : ',end="")
-print(d)
+    print('Value of d is : ',end="")
+    print(d)
+
+    p_text = input("Enter the plain text message: ")
+
+    cipher_text = [(ord(char) ** E) % (N) for char in p_text]
+
+    print("Plain text is ",end="--> ")
+    print(p_text)
+    print("The cipher text is: ",end="--> ")
+    print(cipher_text)
+
+    cipher_text_message = np.zeros(shape=(b,k))
+
+    for i in range(b):
+        for j in range(k):
+            cipher_text_message[i][j] = (cipher_text[j]**e[i][j]) % N 
+
+    print("Cipher text message is: ",end="--> ")
+    print(cipher_text_message)
+
+
+
+
