@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-from math import gcd, log
+from math import gcd
 from random import randint
 
 MMI = lambda a, n, s=1, t=0, z=0: (n < 2 and t % z or MMI(n, a % n, t, s - a // n * t, z or n), -1)[n < 1]
