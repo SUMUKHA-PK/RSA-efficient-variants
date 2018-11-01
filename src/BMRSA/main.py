@@ -89,8 +89,8 @@ def is_prime(n, d):
 def generate_primes(n, b):
     primes = []
     bits = int(n/b)
-    minimum = 2 ** bits
-    maximum = 2 ** (bits+1)
+    minimum = 2 ** (bits-1)
+    maximum = 2 ** (bits)
 
     d = [2, 3, 5, 7]
 
@@ -176,7 +176,7 @@ def generate_r(tree_es, tree_vs, n, r):
         t_l = int(t//tree_es[left])
         t_r = int((t-1)//tree_es[right])
         print(n, tree[i], tree_vs[left], tree_vs[right], t, t_l, t_r)
-        r_r = ((tree[i]**t)//((tree_vs[right]**t_l)*(tree_vs[left]**t_r))) % n
+        r_r = ((tree[i]**t)//((tree_vs[right]**t_l)*(tree_vs[left]**t_r)) % n)
         r_l = (r // r_r) % n
         tree[left] = r_l
         tree[right] = r_r
