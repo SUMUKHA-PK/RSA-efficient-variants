@@ -72,11 +72,13 @@ def run(n,k,b,c):
 
     for i in range(b):
         for j in range(k-1):
-            e[i][j] = random.randint(0,sys.maxsize)
+            x = min(pow(2,n),sys.maxsize)
+            e[i][j] = random.randint(0,x)
     
     for i in range(b):
         for j in range(k-1):
-            d[i][j] = random.randint(0,sys.maxsize)
+            x = min(pow(2,c),sys.maxsize)
+            d[i][j] = random.randint(0,x)
     
     product = np.zeros(shape=(b,k),dtype=int)
 
@@ -100,6 +102,16 @@ def run(n,k,b,c):
 
     print(product)
 
+    for i in range(b):
+        x = min(pow(2,n),sys.maxsize)
+        e_rand = random.randint(0,x)
+        e[i][k-1] = e_rand
+        d[i][k-1] = multiplicative_inverse(e_rand,(primes_p[i]-1))
+
+    print(d,end="d\n")
+
+    print(e)
+
     p_text = input("Enter the plain text message: ")
 
     cipher_text = [(ord(char) ** E) % (N) for char in p_text]
@@ -112,11 +124,11 @@ def run(n,k,b,c):
     # for i in range(b):
     #     for i in range(k):
             
-    cipher_text_message = np.zeros(shape=(b,k))  # Z
+    cipher_text_message = np.zeros(shape=(b,len(cipher_text)))  # Z
 
     for i in range(b):
-        for j in range(k):
-            cipher_text_message[i][j] = (cipher_text[j]**e[i][j]) % N 
+        for j in range(len(cipher_text)):
+            cipher_text_message[i][j] = ((cipher_text[j]%N)**e[i][j]) % N 
 
     print("Cipher text message is: ",end="--> ")
     print(cipher_text_message)
