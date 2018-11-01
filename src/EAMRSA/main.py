@@ -2,16 +2,17 @@ import math
 import numpy as np
 import sys
 import os
+import random
 sys.path.append((os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))))
 from check_prime import check_prime
 from inverse import multiplicative_inverse
 
+#Taking user input for security parameters. These can also be defined for each test case separately
+n = int(input('Enter the security parameter \'n\': '))
+b = int(input('Enter the value of parameter \'b\': '))
+k = int(input('Enter the value of parameter \'k\': '))
+c = int(input('Enter the value of parameter \'c\': '))
 
-# Taking user input for security parameters. These can also be defined for each test case separately
-# n = int(input('Enter the security parameter \'n\': '))
-# b = int(input('Enter the value of parameter \'b\': '))
-# k = int(input('Enter the value of parameter \'k\': '))
-# c = int(input('Enter the value of parameter \'c\': '))
 
 def run(n,k,b,c):
     bits_len = n//b
@@ -54,10 +55,50 @@ def run(n,k,b,c):
 
     E = 65537
 
-    d = multiplicative_inverse(E,phi(primes_p))
+    e = np.zeros(shape=(b,k))
+    d = np.zeros(shape=(b,k))
+
+    D = multiplicative_inverse(E,phi(primes_p))
 
     print('Value of d is : ',end="")
+    print(D)
+
+    r = np.zeros(b,dtype=int)
+
+    for i in range(b):
+        r[i] = D % (primes_p[i]-1)
+    print("Array r: ",end="")
+    print(r)
+
+    for i in range(b):
+        for j in range(k-1):
+            e[i][j] = random.randint(0,sys.maxsize)
+    
+    for i in range(b):
+        for j in range(k-1):
+            d[i][j] = random.randint(0,sys.maxsize)
+    
+    product = np.zeros(shape=(b,k),dtype=int)
+
+    for i in range(b):
+        for j in range(k):
+            product[i][j] = (e[i][j]*d[i][j])%(primes_p[i] - 1)
+
+    for i in range(b):
+        temp_sum = 0 
+        for j in range(k):
+            temp_sum +=product[i][j]
+        for kk in range(sys.maxsize):
+            if(r[i]==((temp_sum + kk)%(primes_p[i]-1))):
+                temp_val = kk
+                break
+        product[i][k-1] = temp_val
+     
     print(d)
+
+    print(e)
+
+    print(product)
 
     p_text = input("Enter the plain text message: ")
 
@@ -68,7 +109,10 @@ def run(n,k,b,c):
     print("The cipher text is: ",end="--> ")
     print(cipher_text)
 
-    cipher_text_message = np.zeros(shape=(b,k))
+    # for i in range(b):
+    #     for i in range(k):
+            
+    cipher_text_message = np.zeros(shape=(b,k))  # Z
 
     for i in range(b):
         for j in range(k):
@@ -79,4 +123,5 @@ def run(n,k,b,c):
 
 
 
+run(n,k,b,c)
 
