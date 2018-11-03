@@ -55,61 +55,66 @@ def run(n,k,b,c):
 
     E = 65537
 
-    e = np.zeros(shape=(b,k))
-    d = np.zeros(shape=(b,k))
+    e = np.zeros(shape=(b*k),dtype=int)
+    d = np.zeros(shape=(b*k),dtype=int)
 
     D = multiplicative_inverse(E,phi(primes_p))
 
     print('Value of d is : ',end="")
     print(D)
 
-    r = np.zeros(b,dtype=int)
+    r = np.zeros(b)
 
     for i in range(b):
         r[i] = D % (primes_p[i]-1)
-    print("Array r: ",end="")
+    print("Array r: ")
     print(r)
 
     for i in range(b):
         for j in range(k-1):
-            x = min(pow(2,n),sys.maxsize)
-            e[i][j] = random.randint(0,x)
+            y = random.randint(0,pow(2,n))
+            e[i*k +j] = y
     
     for i in range(b):
         for j in range(k-1):
-            x = min(pow(2,c),sys.maxsize)
-            d[i][j] = random.randint(0,x)
+            y = random.randint(0,pow(2,c))
+            d[i*k +j] = y
     
-    product = np.zeros(shape=(b,k),dtype=int)
+    product = np.zeros(shape=(b*k),dtype=int)
 
     for i in range(b):
         for j in range(k):
-            product[i][j] = (e[i][j]*d[i][j])%(primes_p[i] - 1)
+            product[i*k+j] = (e[i*k +j]*d[i*k +j])%(primes_p[i] - 1)
 
     for i in range(b):
         temp_sum = 0 
         for j in range(k):
-            temp_sum +=product[i][j]
+            temp_sum +=product[i*k +j]
         for kk in range(sys.maxsize):
             if(r[i]==((temp_sum + kk)%(primes_p[i]-1))):
                 temp_val = kk
                 break
-        product[i][k-1] = temp_val
-     
+        product[i*k + k-1] = temp_val
+   
+    print("Array d: ") 
     print(d)
 
+    print("Array e: ")
     print(e)
 
+    print("Array product: ")
     print(product)
 
     for i in range(b):
-        x = min(pow(2,n),sys.maxsize)
-        e_rand = random.randint(0,x)
-        e[i][k-1] = e_rand
-        d[i][k-1] = multiplicative_inverse(e_rand,(primes_p[i]-1))
+        y = random.randint(0,pow(2,n))
+        e_rand = y
+        e[i*k +k-1] = e_rand
+        d[i*k +k-1] = multiplicative_inverse(e_rand,(primes_p[i]-1))
 
-    print(d,end="d\n")
+    print("Array d: ") 
+    print(d)
 
+    print("Array e: ")
     print(e)
 
     p_text = input("Enter the plain text message: ")
@@ -124,11 +129,14 @@ def run(n,k,b,c):
     # for i in range(b):
     #     for i in range(k):
             
-    cipher_text_message = np.zeros(shape=(b,len(cipher_text)))  # Z
+    cipher_text_message = np.zeros(shape=((b*k),len(cipher_text)),dtype=int)  # Z
 
     for i in range(b):
-        for j in range(len(cipher_text)):
-            cipher_text_message[i][j] = ((cipher_text[j]%N)**e[i][j]) % N 
+        for j in range(k):        
+            for kk in range(len(cipher_text)):
+                cipher_text[kk]%=N
+                cipher_text_message[i*k + j][kk] = ((cipher_text[kk])**e[i*k +j]) 
+                cipher_text_message[i*k + j][kk]%=N
 
     print("Cipher text message is: ",end="--> ")
     print(cipher_text_message)
