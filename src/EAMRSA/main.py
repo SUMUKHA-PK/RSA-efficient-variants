@@ -4,9 +4,13 @@ import sys
 import os
 import random
 sys.path.append((os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))))
+sys.path.append((os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)))+"\\BMRSA")
+print(sys.path)
 from check_prime import check_prime
 from inverse import multiplicative_inverse
+from crt import crt
 
+print(crt(2,3))
 #Taking user input for security parameters. These can also be defined for each test case separately
 n = int(input('Enter the security parameter \'n\': '))
 b = int(input('Enter the value of parameter \'b\': '))

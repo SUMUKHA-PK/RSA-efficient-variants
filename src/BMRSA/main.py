@@ -1,6 +1,8 @@
 import numpy as np
 from math import gcd, log
 from random import randint
+sys.path.append((os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))))
+from crt import crt 
 
 MMI = lambda a, n, s=1, t=0, z=0: (n < 2 and t % z or MMI(n, a % n, t, s - a // n * t, z or n), -1)[n < 1]
 
