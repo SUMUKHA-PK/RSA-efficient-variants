@@ -4,20 +4,19 @@ import sys
 import os
 import random
 sys.path.append((os.path.abspath(os.path.join(os.path.abspath(__file__), os.pardir))))
-sys.path.append((os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)))+"\\BMRSA")
 # print(sys.path)
 from check_prime import check_prime
 from inverse import multiplicative_inverse
-from crt import crt
+
 
 #Taking user input for security parameters. These can also be defined for each test case separately
-n = int(input('Enter the security parameter \'n\': '))
-b = int(input('Enter the value of parameter \'b\': '))
-k = int(input('Enter the value of parameter \'k\': '))
-c = int(input('Enter the value of parameter \'c\': '))
+# n = int(input('Enter the security parameter \'n\': '))
+# b = int(input('Enter the value of parameter \'b\': '))
+# k = int(input('Enter the value of parameter \'k\': '))
+# c = int(input('Enter the value of parameter \'c\': '))
 
 
-def run(n,k,b,c):
+def run(n,k,b,c,pt):
 
     def exponent(a,b,c):
         a=a%c
@@ -129,8 +128,8 @@ def run(n,k,b,c):
     print("Array e: ")
     print(e)
 
-    p_text = input("Enter the plain text message: ")
-
+    # p_text = input("Enter the plain text message: ")
+    p_text = pt
     cipher_text = [(ord(char) ** E) % (N) for char in p_text]
 
     print("Plain text is ",end="--> ")
@@ -195,5 +194,5 @@ def run(n,k,b,c):
 
     print(decrypted_data)
 
-run(n,k,b,c)
+# run(n,k,b,c)
 
