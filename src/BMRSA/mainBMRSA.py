@@ -137,8 +137,6 @@ def generate_tree_e(es):
         tree = [tree[i] * tree[i-1], *tree]
         i -= 1
 
-    # interchange(tree)
-
     return tree
 
 
@@ -233,7 +231,7 @@ def main():
     v = 1
     # Root node
     for i in range(len(vs)):
-        v *= (vs[i] ** int((e/es[i]))) % n
+        v *= (vs[i] ** int((e//es[i]))) % n
 
     v %= n
 
