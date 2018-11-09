@@ -20,7 +20,7 @@ def run(n,k,b,c,pt):
 
     def exponent(a,b,c):
         a=a%c
-        temp = a
+        temp = 1
         for i in range(b):
             temp = temp * a
             temp%=c
@@ -78,7 +78,7 @@ def run(n,k,b,c,pt):
     print(D)
 
     # List for the values of 'r' = D mod(primes-1)
-    r = np.zeros(b)
+    r = np.zeros(b,dtype=int)
 
     for i in range(b):
         r[i] = D % (primes_p[i]-1)
@@ -96,12 +96,18 @@ def run(n,k,b,c,pt):
             y = random.randint(0,pow(2,c))
             d[i*k +j] = y
     
+    print("Array d: ") 
+    print(d)
+
+    print("Array e: ")
+    print(e)
+
     # List to adjust the conditions of the generated lists of priv and pub keys
     product = np.zeros(shape=(b*k),dtype=int)
 
     for i in range(b):
-        for j in range(k):
-            product[i*k+j] = (e[i*k +j]*d[i*k +j])%(primes_p[i] - 1)
+        for j in range(k-1):
+            product[i*k+j] = (e[i*k +j]*d[i*k +j])
 
     for i in range(b):
         temp_sum = 0 
@@ -117,10 +123,8 @@ def run(n,k,b,c,pt):
     print(product)
 
     for i in range(b):
-        y = random.randint(0,pow(2,n))
-        e_rand = y
-        e[i*k +k-1] = e_rand
-        d[i*k +k-1] = multiplicative_inverse(e_rand,(primes_p[i]-1))
+        e[i*k +k-1] = 1
+        d[i*k +k-1] = product[i*k+k-1]
 
     print("Array d: ") 
     print(d)
@@ -162,13 +166,19 @@ def run(n,k,b,c,pt):
     y_inverse = np.zeros(shape=(b),dtype=int)
 
     for i in range(b):
-        y_inverse[i] = multiplicative_inverse(y[i],primes_p[i]-1)
+        y_inverse[i] = multiplicative_inverse(y[i],primes_p[i])
+    
+    print("The list y inv : ",end = "-->")
+    print(y_inverse)
     
     n_vec = np.zeros(shape=(b),dtype=int)
 
     for i in range(b):
         n_vec[i] = y[i]*y_inverse[i]
     
+    print("The list nvec : ",end = "-->")
+    print(n_vec)
+
     M = np.zeros(shape=((b),len(cipher_text)),dtype=int)
 
     for kk in range(len(cipher_text)):
@@ -187,9 +197,12 @@ def run(n,k,b,c,pt):
     for i in range(len(cipher_text)):
         temp = 0
         for j in range(b):
-            temp = temp + M[j][i]
+            temp = temp + M[j][i]*n_vec[j]
         mess_vec[i] = temp
     
+    print("The list messvec : ",end = "-->")
+    print(mess_vec)
+
     decrypted_data = [chr(char % N) for char in mess_vec]
 
     print(decrypted_data)

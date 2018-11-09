@@ -8,7 +8,7 @@ from EAMRSA import main as EAMRSA
 plain_t = "the quick brown fox jumps over something"
 
 t1s = time.time()
-EAMRSA.run(12,128,3,6,plain_t)
+EAMRSA.run(16,128,3,6,plain_t)
 t1e = time.time()
 
 print("Time taken for 2304 bits: ",end="")
@@ -29,7 +29,7 @@ print("Time taken for 2560 bits: ",end="")
 print(t3e-t3s)
 
 t4s = time.time()
-EAMRSA.run(12,128,3,8,plain_t)
+EAMRSA.run(16,128,3,8,plain_t)
 t4e = time.time()
 
 print("Time taken for 3072 bits: ",end="")
