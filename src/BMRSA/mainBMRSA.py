@@ -1,6 +1,7 @@
 import numpy as np
 from math import gcd, log
 from random import randint
+import sys
 
 MMI = lambda a, n, s=1, t=0, z=0: (n < 2 and t % z or MMI(n, a % n, t, s - a // n * t, z or n), -1)[n < 1]
 
@@ -90,7 +91,7 @@ def generate_primes(n, b):
     primes = []
     bits = int(n/b)
     minimum = 2 ** (bits-1)
-    maximum = 2 ** (bits)
+    maximum = 2 ** bits
 
     d = [2, 3, 5, 7]
 
@@ -175,7 +176,6 @@ def generate_r(tree_es, tree_vs, n, r):
         t = crt([tree_es[left], tree_es[right]], [0, 1])
         t_l = int(t//tree_es[left])
         t_r = int((t-1)//tree_es[right])
-        print(n, tree[i], tree_vs[left], tree_vs[right], t, t_l, t_r)
         r_r = ((tree[i]**t)//((tree_vs[right]**t_l)*(tree_vs[left]**t_r)) % n)
         r_l = (r // r_r) % n
         tree[left] = r_l
@@ -216,7 +216,7 @@ def main():
 
     # private key
     # Check
-    ds = [(d % p) - 1 for p in primes]
+    ds = [d % (p - 1) for p in primes]
 
     message = generate_message(li)
 
@@ -227,15 +227,17 @@ def main():
     e = 1
     for i in es:
         e *= i
-    e = e % n
+    e = e
 
     vs = cs[:]
     v = 1
     # Root node
     for i in range(len(vs)):
-        v *= vs[i] ** int((e/es[i]))
+        v *= (vs[i] ** int((e/es[i]))) % n
 
     v %= n
+
+    print("V : ", v, e)
 
     # Exponentiation
     cps = [v % p for p in primes]
@@ -249,12 +251,14 @@ def main():
     for i in range(len(nis)):
         r += nis[i] * mps[i]
 
+    r %= n
+
     tree_es = generate_tree_e(es)
     tree_vs = generate_tree_v(vs, tree_es, n)
 
     tree_rs = generate_r(tree_es, tree_vs, n, r)
 
-    print(tree_rs, message)
+    print(tree_vs, tree_es, tree_rs, message, n)
 
 
 if __name__ == '__main__':
