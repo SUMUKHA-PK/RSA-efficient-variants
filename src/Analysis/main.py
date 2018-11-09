@@ -7,7 +7,7 @@ sys.path.append((os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__
 from Simple_RSA import main as Simple_RSA
 
 SRSA_start = time.time()
-Simple_RSA.run()
+Simple_RSA.run(701,709,"aaaa")
 SRSA_end = time.time()
 
 print("Simple RSA took: ",end="")

@@ -4,8 +4,9 @@ import os
 from pathlib import Path
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), os.pardir))))
 from EAMRSA import main as EAMRSA
+from Simple_RSA import main as SRSA
 
-plain_t = "the quick brown fox jumps over something"
+plain_t = "the quick brown fox jumps over the lazy dog"
 
 t1s = time.time()
 EAMRSA.run(16,128,3,6,plain_t)
@@ -34,3 +35,5 @@ t4e = time.time()
 
 print("Time taken for 3072 bits: ",end="")
 print(t4e-t4s)
+
+

@@ -205,7 +205,8 @@ def run(n,k,b,c,pt):
 
     decrypted_data = [chr(char % N) for char in mess_vec]
 
-    print(decrypted_data)
+    print("Decrypted data: ",end=" ")
+    print(''.join(decrypted_data))
 
 # run(n,k,b,c)
 
