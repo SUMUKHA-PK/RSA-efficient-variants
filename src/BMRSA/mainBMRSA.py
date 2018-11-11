@@ -17,20 +17,16 @@ def crt(m, x):
     # We run this loop while the list of
     # remainders has length greater than 1
     while True:
-
         # temp1 will contain the new value
         # of A. which is calculated according
         # to the equation m1' * m1 * x0 + m0'
         # * m0 * x1
-        temp1 = MMI(m[1], m[0]) * x[0] * m[1] + \
-                MMI(m[0], m[1]) * x[1] * m[0]
-
+        temp1 = MMI(m[1], m[0]) * x[0] * m[1] + MMI(m[0], m[1]) * x[1] * m[0]
         # temp2 contains the value of the modulus
         # in the new equation, which will be the
         # product of the modulus of the two
         # equations that we are combining
         temp2 = m[0] * m[1]
-
         # we then remove the first two elements
         # from the list of remainders, and replace
         # it with the remainder value, which will
@@ -38,7 +34,6 @@ def crt(m, x):
         x.remove(x[0])
         x.remove(x[0])
         x = [temp1 % temp2] + x
-
         # we then remove the first two values from
         # the list of modulus as we no longer require
         # them and simply replace them with the new
@@ -46,19 +41,17 @@ def crt(m, x):
         m.remove(m[0])
         m.remove(m[0])
         m = [temp2] + m
-
         # once the list has only one element left,
         # we can break as it will only  contain
         # the value of our final remainder
         if len(x) == 1:
             break
-
     # returns the remainder of the final equation
     return x[0]
 
 
 def generate_message(l):
-    return np.array([randint(0, 128) for _ in range(l)], dtype=object)
+    return np.array([randint(1, 128) for _ in range(l)], dtype=object)
 
 
 def is_prime(n, d):
@@ -73,7 +66,7 @@ def is_prime(n, d):
                 break
 
         if prime:
-            d.append(prime)
+            d.append(i)
 
         i += 2
 
@@ -113,12 +106,8 @@ def generate_primes(n, b):
 
 
 def encrypt(message, es, n):
+    print(message[0] ** es[0] % n)
     return [(message[i] ** es[i]) % n for i in range(len(message))]
-
-
-def interchange(tree):
-    for i in range(1, len(tree), 2):
-        tree[i], tree[i+1] = swap(tree[i], tree[i+1])
 
 
 def generate_tree_e(es):
@@ -164,18 +153,20 @@ def generate_tree_v(vs, tree_es, n):
 
 
 def generate_r(tree_es, tree_vs, n, r):
+    n = int(n)
 
     i = 0
     tree = [r, *[0 for _ in range(len(tree_vs)-1)]]
 
     while 2*i + 2 < len(tree):
+        r = tree[i]
         left = 2*i + 1
         right = 2*i + 2
         t = crt([tree_es[left], tree_es[right]], [0, 1])
         t_l = int(t//tree_es[left])
         t_r = int((t-1)//tree_es[right])
-        r_r = ((tree[i]**t)//((tree_vs[right]**t_l)*(tree_vs[left]**t_r)) % n)
-        r_l = (r // r_r) % n
+        r_r = (tree[i]**t)*MMI((tree_vs[right]**t_r)*(tree_vs[left]**t_l), n) % n
+        r_l = (r*(MMI(r_r, n))) % n
         tree[left] = r_l
         tree[right] = r_r
         i += 1
@@ -183,7 +174,12 @@ def generate_r(tree_es, tree_vs, n, r):
 
 
 def main():
-    n = int(sys.argv[1])
+
+    if len(sys.argv) > 1:
+        n = int(sys.argv[1])
+    else:
+        n = 10
+
     b = int(input("Enter b\n"))
     li = int(input("\nEnter l\n"))
     primes = generate_primes(n, b)
@@ -213,7 +209,6 @@ def main():
     d = np.prod(ds) % phi_n
 
     # private key
-    # Check
     ds = [d % (p - 1) for p in primes]
 
     message = generate_message(li)
@@ -221,27 +216,22 @@ def main():
     # encrypted_messages (Ciphers)
     cs = encrypt(message, es, n)
 
-    # Percolate Up
-    e = 1
-    for i in es:
-        e *= i
-    e = e
+    print("message :", message)
+    print("cipher :", cs)
 
     vs = cs[:]
-    v = 1
-    # Root node
-    for i in range(len(vs)):
-        v *= (vs[i] ** int((e//es[i]))) % n
 
-    v %= n
+    tree_es = generate_tree_e(es)
 
-    print("V : ", v, e)
+    tree_vs = generate_tree_v(vs, tree_es, n)
+
+    v = tree_vs[0]
 
     # Exponentiation
     cps = [v % p for p in primes]
     mps = [(cps[i] ** ds[i]) % primes[i] for i in range(len(primes))]
 
-    ys = [int(n/p) for p in primes]
+    ys = [n//p for p in primes]
     nis = [ys[i] * MMI(ys[i], primes[i]) for i in range(len(ys))]
 
     r = 0
@@ -251,12 +241,17 @@ def main():
 
     r %= n
 
-    tree_es = generate_tree_e(es)
-    tree_vs = generate_tree_v(vs, tree_es, n)
+    r = int(r)
 
     tree_rs = generate_r(tree_es, tree_vs, n, r)
 
-    print(tree_vs, tree_es, tree_rs, message, n)
+    decrypted = tree_rs[-li:]
+
+    t = 2**int(log(li, 2))
+
+    decrypted = [*decrypted[li - t:], *decrypted[0: li - t]]
+
+    print("decrypted :", decrypted)
 
 
 if __name__ == '__main__':
