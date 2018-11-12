@@ -1,28 +1,56 @@
 import mainBMRSA as Bmrsa
 import mainMRSA as Mrsa
+import matplotlib.pyplot as plt
 
 from useful import funcs
 
-n = 30
-b = 2
-ll = 2
+bsize = 1
 
-primes = funcs.generate_primes(n, b)
+while bsize < 4:
+    itr = 10
+    mrsa = []
+    bmrsa = []
+    pts = []
+    while itr <= 18:
 
-n = 1
+        pts.append(2 ** itr)
 
-for p in primes:
-    n *= p
+        n = itr
+        b = 2
+        ll = bsize
 
-m = funcs.generate_message(ll, n)
+        primes = funcs.generate_primes(n, b)
 
-es = funcs.es(primes, ll)
+        n = 1
 
-timeMRSA = 0
+        for p in primes:
+            n *= p
 
-for i in range(ll):
-    timeMRSA += Mrsa.main(primes, es[i], m[i])
+        m = funcs.generate_message(ll, n)
 
-timeBMRSA = Bmrsa.main(primes, es, m)
+        es = funcs.es(primes, ll)
 
-print(timeMRSA, timeBMRSA)
+        timeMRSA = 0
+
+        for i in range(ll):
+            timeMRSA += Mrsa.main(primes, es[i], m[i])
+
+        mrsa.append(timeMRSA*1000)
+
+        timeBMRSA = Bmrsa.main(primes, es, m)
+
+        bmrsa.append(timeBMRSA*1000)
+
+        itr += 2
+
+    fig, ax = plt.subplots()
+    ax.plot(pts, mrsa, "ro-", label="MRSA")
+    ax.plot(pts, bmrsa, "bo-", label="BMRSA")
+
+    legend = ax.legend(loc='upper center', shadow=True, fontsize='x-large')
+
+    plt.title("Decryption time vs Key Size in bits for batch size = " + str(bsize))
+    plt.xlabel('Time in milliseconds')
+    plt.ylabel('No of Bits in key')
+    plt.show()
+    bsize += 1
