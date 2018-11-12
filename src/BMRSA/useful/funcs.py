@@ -1,11 +1,14 @@
+import numpy as np
+import sys
+from random import randint
 
 MMI = lambda a, n, s=1, t=0, z=0: (n < 2 and t % z or MMI(n, a % n, t, s - a // n * t, z or n), -1)[n < 1]
+
+
 # function implementing Chinese remainder theorem
 # list m contains all the modulus
 # list x contains the remainders of the equations
 def crt(m, x):
-
- 
     # We run this loop while the list of
     # remainders has length greater than 1
     while True:
@@ -47,3 +50,61 @@ def crt(m, x):
 
     # returns the remainder of the final equation
     return x[0]
+
+
+def is_prime(n, d):
+
+    i = d[-1] + 2
+    while i*i <= n:
+        prime = True
+
+        for j in d:
+            if i % j == 0:
+                prime = False
+                break
+
+        if prime:
+            d.append(i)
+
+        i += 2
+
+    for j in d:
+        if n % j == 0:
+            if n == j:
+                return True
+            else:
+                return False
+
+    return True
+
+
+def generate_primes(n, b):
+    primes = []
+    bits = int(n/b)
+    minimum = 2 ** (bits-1)
+    maximum = 2 ** bits
+
+    d = [2, 3, 5, 7]
+
+    for i in range(minimum + 1, maximum):
+        if is_prime(i, d):
+            primes.append(i)
+        if len(primes) >= 2*b:
+            break
+
+    primes = np.array(primes, dtype=object)
+
+    if primes.size < b:
+        print("b is too large. Change b or n")
+        sys.exit(-1)
+
+    np.random.shuffle(primes)
+
+    return primes[:b]
+
+
+def swap(a, b):
+    return b, a
+
+def generate_message(l):
+    return np.array([randint(1, 128) for _ in range(l)], dtype=object)
