@@ -66,7 +66,7 @@ def generate_r(tree_es, tree_vs, n, r):
         t_l = int(t//tree_es[left])
         t_r = int((t-1)//tree_es[right])
         r_r = (tree[i]**t)*funcs.MMI((tree_vs[right]**t_r)*(tree_vs[left]**t_l), n) % n
-        r_l = (r*(MMI(r_r, n))) % n
+        r_l = (r*(funcs.MMI(r_r, n))) % n
         tree[left] = r_l
         tree[right] = r_r
         i += 1
@@ -74,7 +74,16 @@ def generate_r(tree_es, tree_vs, n, r):
     return tree
 
 
-def main(primes, es):
+def main(primes, es, message):
+
+    phi = 1
+    n = 1
+
+    for p in primes:
+        phi *= (p-1)
+
+    for p in primes:
+        n *= p
 
     ds = np.array([funcs.MMI(num, phi) for num in es], dtype=object)
 
@@ -83,16 +92,14 @@ def main(primes, es):
     # private key
     ds = [d % (p - 1) for p in primes]
 
-    message = funcs.generate_message(li)
-
     # encrypted_messages (Ciphers)
-    cs = encrypt(message, es, no)
+    cs = encrypt(message, es, n)
 
     vs = cs[:]
 
     tree_es = generate_tree_e(es, phi)
 
-    tree_vs = generate_tree_v(vs, tree_es, no)
+    tree_vs = generate_tree_v(vs, tree_es, n)
 
     v = tree_vs[0]
 
@@ -100,7 +107,7 @@ def main(primes, es):
     cps = [v % p for p in primes]
     mps = [(cps[i] ** ds[i]) % primes[i] for i in range(len(primes))]
 
-    ys = [no // p for p in primes]
+    ys = [n // p for p in primes]
     nis = [ys[i] * funcs.MMI(ys[i], primes[i]) for i in range(len(ys))]
 
     r = 0
@@ -108,31 +115,17 @@ def main(primes, es):
     for i in range(len(nis)):
         r += nis[i] * mps[i]
 
-    r %= no
+    r %= n
 
     r = int(r)
 
-    print(tree_vs, tree_es)
-
     start = time.clock()
 
-    tree_rs = generate_r(tree_es, tree_vs, no, r)
+    tree_rs = generate_r(tree_es, tree_vs, n, r)
 
     end = time.clock() - start
 
     _ = tree_rs
-
-    # decrypted = tree_rs[-li:]
-    #
-    # t = int(log(li, 2))
-    #
-    # t = 2 * (li - 2 ** t)
-    #
-    # decrypted = [*decrypted[li - t:], *decrypted[0: li - t]]
-    #
-    # print(tree_rs, n)
-    #
-    # print("decrypted :", decrypted)
 
     return end
 
@@ -149,22 +142,6 @@ if __name__ == '__main__':
 
     no = np.prod(ps)
 
-    phi = 1
-    for ii in ps:
-        phi *= (ii - 1)
+    m = funcs.generate_message(li)
 
-    temp = randint(2, 100)
-    ess = []
-
-    while len(ess) < li:
-        if gcd(temp, phi) == 1:
-            is_rp = True
-            for ii in ess:
-                if gcd(temp, ii) != 1:
-                    is_rp = False
-                    break
-            if is_rp:
-                ess.append(temp)
-        temp += 1
-
-    print(main(ps, ess))
+    print(main(ps, ess, m))

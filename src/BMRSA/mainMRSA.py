@@ -6,28 +6,20 @@ import time
 from useful import funcs
 
 
-def generate_message(m):
-    return randint(0, min(m, 128))
-
-
 def encrypt_decrypt(message, e, n):
     return (message ** e) % n
 
 
-def main(primes, e):
+def main(primes, e, message):
     start = time.clock()
 
     n = np.prod(primes)
 
     phi_n = 1
-    for i in ps:
+    for i in primes:
         phi_n *= (i - 1)
 
     d = funcs.MMI(e, phi_n) % phi_n
-
-    # private key
-    # Check
-    message = generate_message(n)
 
     # encrypted_messages (Ciphers)
     c = encrypt_decrypt(message, e, n)
@@ -60,4 +52,4 @@ if __name__ == '__main__':
             break
         temp += 1
 
-    print(main(ps, temp))
+    print(main(ps, temp, funcs.generate_message(n)))

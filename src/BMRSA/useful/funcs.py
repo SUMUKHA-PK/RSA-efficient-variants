@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 from random import randint
+from math import gcd
 
 MMI = lambda a, n, s=1, t=0, z=0: (n < 2 and t % z or MMI(n, a % n, t, s - a // n * t, z or n), -1)[n < 1]
 
@@ -106,5 +107,28 @@ def generate_primes(n, b):
 def swap(a, b):
     return b, a
 
-def generate_message(l):
-    return np.array([randint(1, 128) for _ in range(l)], dtype=object)
+
+def generate_message(l, n):
+    return np.array([randint(1, min(128, n)) for _ in range(l)], dtype=object)
+
+
+def es(ps, li):
+    phi = 1
+    for ii in ps:
+        phi *= (ii - 1)
+
+    temp = randint(2, 100)
+    ess = []
+
+    while len(ess) < li:
+        if gcd(temp, phi) == 1:
+            is_rp = True
+            for ii in ess:
+                if gcd(temp, ii) != 1:
+                    is_rp = False
+                    break
+            if is_rp:
+                ess.append(temp)
+        temp += 1
+
+    return ess
