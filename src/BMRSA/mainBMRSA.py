@@ -106,11 +106,10 @@ def generate_primes(n, b):
 
 
 def encrypt(message, es, n):
-    print(message[0] ** es[0] % n)
     return [(message[i] ** es[i]) % n for i in range(len(message))]
 
 
-def generate_tree_e(es):
+def generate_tree_e(es, n):
     leaves = len(es)
     t = int(log(leaves, 2))
 
@@ -123,7 +122,7 @@ def generate_tree_e(es):
     i = len(tree) - 1
 
     while len(tree) < length:
-        tree = [tree[i] * tree[i-1], *tree]
+        tree = [tree[i] * tree[i-1] % n, *tree]
         i -= 1
 
     return tree
@@ -170,6 +169,7 @@ def generate_r(tree_es, tree_vs, n, r):
         tree[left] = r_l
         tree[right] = r_r
         i += 1
+
     return tree
 
 
@@ -221,7 +221,7 @@ def main():
 
     vs = cs[:]
 
-    tree_es = generate_tree_e(es)
+    tree_es = generate_tree_e(es, phi_n)
 
     tree_vs = generate_tree_v(vs, tree_es, n)
 
@@ -243,13 +243,19 @@ def main():
 
     r = int(r)
 
+    print(tree_vs, tree_es)
+
     tree_rs = generate_r(tree_es, tree_vs, n, r)
 
     decrypted = tree_rs[-li:]
 
-    t = 2**int(log(li, 2))
+    t = int(log(li, 2))
+
+    t = 2 * (li - 2 ** t)
 
     decrypted = [*decrypted[li - t:], *decrypted[0: li - t]]
+
+    print(tree_rs, n)
 
     print("decrypted :", decrypted)
 
