@@ -42,16 +42,16 @@ def find_pk(e,phi):
             return x
 
 
-def run():
-    print('Enter two prime numbers(above 15):\n')
-    a = int(input('a: '))
-    b = int(input('b: '))
+def run(a,b,pt):
+    # print('Enter two prime numbers(above 15):\n')
+    # a = int(input('a: '))
+    # b = int(input('b: '))
 
-    while(not(check_prime(a))&(a>16)):
-        a = int(input('a is either not prime or is less than 15. Enter a prime number a: '))
+    # while(not(check_prime(a))&(a>16)):
+    #     a = int(input('a is either not prime or is less than 15. Enter a prime number a: '))
 
-    while(not(check_prime(b))&(b>16)):
-        b = int(input('b is either not prime or is less than 15. Enter a prime number b: '))
+    # while(not(check_prime(b))&(b>16)):
+    #     b = int(input('b is either not prime or is less than 15. Enter a prime number b: '))
 
     n = a * b    
 
@@ -62,15 +62,18 @@ def run():
     #Private key -> (private_key,n)
     private_key = find_pk(exp,phi(a,b))
 
-    message = input('Enter the message/number to be encrypted: ')
+    message = pt#input('Enter the message/number to be encrypted: ')
 
-    print('The encrypted data is ....')
+    print("The plain text message is: ",end=": ")
+    print(message)
+
+    print('The encrypted data is ',end=": ")
     encrypted_data = [(ord(char) ** exp) % (a*b) for char in message]
 
     print (''.join(map(lambda x: str(x), encrypted_data)))
 
 
-    print('The decrypted data is.....')
+    print('The decrypted data is ',end=": ")
     decrypted_data = [chr((char ** private_key) % (a*b)) for char in encrypted_data]
 
     print(''.join(decrypted_data))
