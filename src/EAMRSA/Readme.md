@@ -20,3 +20,9 @@
 **File structure:**
 
 1. main.py : The main driver code 
+2. inverse.py : Function to obtain modular inverse of 2 numbers.
+3. check_prime.py : Check whether a number is prime or not.
+
+**Result:**
+
+![](Figure_1.png)
