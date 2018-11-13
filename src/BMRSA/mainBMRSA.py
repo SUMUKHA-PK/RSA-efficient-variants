@@ -91,10 +91,11 @@ def generate_r(tree_es, tree_vs, n, r):
     return tree
 
 
-# Testing function
-# Run only from main driver
+# driver function
+# input primes,  es and message
 def main(primes, es, message):
 
+    # Calculate n and phi
     phi = 1
     n = 1
 
@@ -104,8 +105,10 @@ def main(primes, es, message):
     for p in primes:
         n *= p
 
+    # find ds using MMI
     ds = np.array([funcs.MMI(num, phi) for num in es], dtype=object)
 
+    # product of all ds
     d = np.prod(ds) % phi
 
     # private key
@@ -114,15 +117,18 @@ def main(primes, es, message):
     # encrypted_messages (Ciphers)
     cs = encrypt(message, es, n)
 
+    # encrypted messages as leaves of the cipher tree
     vs = cs[:]
 
+    # create tree of co primes
     tree_es = generate_tree_e(es, phi)
 
+    # create cipher tree
     tree_vs = generate_tree_v(vs, tree_es, n)
 
     v = tree_vs[0]
 
-    # Exponentiation
+    # EXPONENTIATION PHASE
     cps = [v % p for p in primes]
     mps = [(cps[i] ** ds[i]) % primes[i] for i in range(len(primes))]
 
@@ -134,10 +140,12 @@ def main(primes, es, message):
     for i in range(len(nis)):
         r += nis[i] * mps[i]
 
+    # Product of all messages
     r %= n
 
     r = int(r)
 
+    # Time decryption
     start = time.clock()
 
     tree_rs = generate_r(tree_es, tree_vs, n, r)
@@ -146,9 +154,12 @@ def main(primes, es, message):
 
     _ = tree_rs
 
+    # return time
     return end
 
 
+# Testing function
+# Run only from main driver
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         no = int(sys.argv[1])

@@ -6,6 +6,7 @@ import time
 from useful import funcs
 
 
+# standard message encryption = m ** e mod N
 def encrypt_decrypt(message, e, n):
     return (message ** e) % n
 
