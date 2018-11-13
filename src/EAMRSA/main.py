@@ -9,14 +9,14 @@ from check_prime import check_prime
 from inverse import multiplicative_inverse
 
 
-#Taking user input for security parameters. These can also be defined for each test case separately
+# Taking user input for security parameters. These can also be defined for each test case separately
 # n = int(input('Enter the security parameter \'n\': '))
+# c = int(input('Enter the value of parameter \'c\': '))
 # b = int(input('Enter the value of parameter \'b\': '))
 # k = int(input('Enter the value of parameter \'k\': '))
-# c = int(input('Enter the value of parameter \'c\': '))
+# pt = input("Enter the message: ")
 
-
-def run(n,k,b,c,pt):
+def run(n,c,b,k,pt):
 
     def exponent(a,b,c):
         a=a%c
@@ -208,5 +208,5 @@ def run(n,k,b,c,pt):
     print("Decrypted data: ",end=" ")
     print(''.join(decrypted_data))
 
-# run(n,k,b,c)
+# run(n,c,b,k,pt)
 
