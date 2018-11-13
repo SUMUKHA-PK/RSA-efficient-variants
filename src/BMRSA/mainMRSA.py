@@ -6,19 +6,25 @@ import time
 from useful import funcs
 
 
+# standard message encryption = m ** e mod N
 def encrypt_decrypt(message, e, n):
     return (message ** e) % n
 
 
+# Driver function
 def main(primes, e, message):
+    # Start timer
     start = time.clock()
 
+    # N = p1*p2....
     n = np.prod(primes)
 
+    # phi = (p1 - 1)*(p2 - 2)....
     phi_n = 1
     for i in primes:
         phi_n *= (i - 1)
 
+    # Find MMI(e, phi_n)
     d = funcs.MMI(e, phi_n) % phi_n
 
     # encrypted_messages (Ciphers)
@@ -27,12 +33,15 @@ def main(primes, e, message):
     # decryption
     de = encrypt_decrypt(c, d, n)
 
+    # decrypted message
     if message == de:
         return time.clock() - start
 
     return inf
 
 
+# Test function only
+# Run only from main driver
 if __name__ == '__main__':
     no = int(sys.argv[1])
     b = int(input("Enter b\n"))

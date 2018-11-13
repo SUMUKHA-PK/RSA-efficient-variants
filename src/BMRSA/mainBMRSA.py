@@ -6,11 +6,17 @@ import time
 from useful import funcs
 
 
+# standard message encryption = m ** e mod N
 def encrypt(message, es, n):
     return [(message[i] ** es[i]) % n for i in range(len(message))]
 
 
-def generate_tree_e(es, n):
+#  PERCOLATE UP
+
+# 1. Generate tree of all co prime factors i.e used to find modulo inverse of es
+def generate_tree_e(es, phi):
+
+    #  creating a full binary tress
     leaves = len(es)
     t = int(log(leaves, 2))
 
@@ -22,14 +28,18 @@ def generate_tree_e(es, n):
 
     i = len(tree) - 1
 
+    # e = er * el % phi
     while len(tree) < length:
-        tree = [tree[i] * tree[i-1] % n, *tree]
+        tree = [tree[i] * tree[i-1] % phi, *tree]
         i -= 1
 
     return tree
 
 
+# 2. Generate cipher tree
 def generate_tree_v(vs, tree_es, n):
+
+    # Full binary tree
     leaves = len(vs)
     t = int(log(leaves, 2))
 
@@ -43,6 +53,7 @@ def generate_tree_v(vs, tree_es, n):
 
     i = len(tree) - len(vs) - 1
 
+    # v =   vL ** er * vR ** el % n
     while i >= 0:
         left = 2*i + 1
         right = 2*i + 2
@@ -52,12 +63,18 @@ def generate_tree_v(vs, tree_es, n):
     return tree
 
 
+# PERCOLATE DOWN
+# Generate root tree to find messages in leaves
 def generate_r(tree_es, tree_vs, n, r):
     n = int(n)
 
+    # Full binary tree
     i = 0
     tree = [r, *[0 for _ in range(len(tree_vs)-1)]]
 
+    # Algorithm wrong in paper
+    # t = 0 mod El and t = 1 mod ER and solving t using crt
+    # rR = r**t / vL ** tL * vR ** tr % n
     while 2*i + 2 < len(tree):
         r = tree[i]
         left = 2*i + 1
@@ -74,8 +91,11 @@ def generate_r(tree_es, tree_vs, n, r):
     return tree
 
 
+# driver function
+# input primes,  es and message
 def main(primes, es, message):
 
+    # Calculate n and phi
     phi = 1
     n = 1
 
@@ -85,8 +105,10 @@ def main(primes, es, message):
     for p in primes:
         n *= p
 
+    # find ds using MMI
     ds = np.array([funcs.MMI(num, phi) for num in es], dtype=object)
 
+    # product of all ds
     d = np.prod(ds) % phi
 
     # private key
@@ -95,15 +117,18 @@ def main(primes, es, message):
     # encrypted_messages (Ciphers)
     cs = encrypt(message, es, n)
 
+    # encrypted messages as leaves of the cipher tree
     vs = cs[:]
 
+    # create tree of co primes
     tree_es = generate_tree_e(es, phi)
 
+    # create cipher tree
     tree_vs = generate_tree_v(vs, tree_es, n)
 
     v = tree_vs[0]
 
-    # Exponentiation
+    # EXPONENTIATION PHASE
     cps = [v % p for p in primes]
     mps = [(cps[i] ** ds[i]) % primes[i] for i in range(len(primes))]
 
@@ -115,10 +140,12 @@ def main(primes, es, message):
     for i in range(len(nis)):
         r += nis[i] * mps[i]
 
+    # Product of all messages
     r %= n
 
     r = int(r)
 
+    # Time decryption
     start = time.clock()
 
     tree_rs = generate_r(tree_es, tree_vs, n, r)
@@ -127,9 +154,12 @@ def main(primes, es, message):
 
     _ = tree_rs
 
+    # return time
     return end
 
 
+# Testing function
+# Run only from main driver
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         no = int(sys.argv[1])
