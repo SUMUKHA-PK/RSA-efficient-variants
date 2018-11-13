@@ -26,3 +26,5 @@
 **Result:**
 
 ![](Figure_1.png)
+
+Above graph reproduces the result as obtained in the paper, comparing the times taken by different versions of Encrypt assistant multi prime RSA
