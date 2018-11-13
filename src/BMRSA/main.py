@@ -70,8 +70,8 @@ while bsize < 4:
 
     # title
     plt.title("Decryption time vs Key Size in bits for batch size = " + str(bsize))
-    plt.xlabel('Time in milliseconds')
-    plt.ylabel('No of Bits in key')
+    plt.ylabel('Time in milliseconds')
+    plt.xlabel('No of Bits in key')
 
     # display graph
     plt.show()
