@@ -1,5 +1,5 @@
 import mainBMRSA as Bmrsa
-import mainMRSA as Mrsa
+import mainBRSA as Brsa
 import matplotlib.pyplot as plt
 
 from useful import funcs
@@ -18,13 +18,11 @@ while bsize < 4:
     bmrsa = []
 
     # points needed to be marked on graph
-    pts = []
+    pts = [1024]
 
     # go till 18 bits
     # No of bits in key = 2 ** (n/b) * b
     while itr <= 18:
-
-        pts.append(2 ** itr)
 
         n = itr
         b = 2
@@ -41,14 +39,14 @@ while bsize < 4:
 
         es = funcs.es(primes, ll)
 
-        timeMRSA = 0
+        timeBRSA = 0
 
-        # Get time for each MRSA
+        # Get time for each BRSA
         for i in range(ll):
-            timeMRSA += Mrsa.main(primes, es[i], m[i])
+            timeBRSA += Brsa.main(primes, es[i], m[i])
 
         # Time in milliseconds
-        mrsa.append(timeMRSA*1000)
+        mrsa.append(timeBRSA * 1000)
 
         # Get time for BMRSA
         timeBMRSA = Bmrsa.main(primes, es, m)
@@ -56,13 +54,15 @@ while bsize < 4:
         # Time in milli seconds
         bmrsa.append(timeBMRSA*1000)
 
+        pts = [1024, 1536, 2048, 2560, 3072]
+
         itr += 2
 
     # Plotting graphs
     fig, ax = plt.subplots()
 
     # plot subplots
-    ax.plot(pts, mrsa, "ro-", label="MRSA")
+    ax.plot(pts, mrsa, "ro-", label="BatchRSA")
     ax.plot(pts, bmrsa, "bo-", label="BMRSA")
 
     # legends in graph
