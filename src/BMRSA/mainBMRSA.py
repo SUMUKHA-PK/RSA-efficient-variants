@@ -6,11 +6,17 @@ import time
 from useful import funcs
 
 
+# standard message encryption = m ** e mod N
 def encrypt(message, es, n):
     return [(message[i] ** es[i]) % n for i in range(len(message))]
 
 
-def generate_tree_e(es, n):
+#  PERCOLATE UP
+
+# 1. Generate tree of all co prime factors i.e used to find modulo inverse of es
+def generate_tree_e(es, phi):
+
+    #  creating a full binary tress
     leaves = len(es)
     t = int(log(leaves, 2))
 
@@ -22,14 +28,18 @@ def generate_tree_e(es, n):
 
     i = len(tree) - 1
 
+    # e = er * el % phi
     while len(tree) < length:
-        tree = [tree[i] * tree[i-1] % n, *tree]
+        tree = [tree[i] * tree[i-1] % phi, *tree]
         i -= 1
 
     return tree
 
 
+# 2. Generate cipher tree
 def generate_tree_v(vs, tree_es, n):
+
+    # Full binary tree
     leaves = len(vs)
     t = int(log(leaves, 2))
 
@@ -43,6 +53,7 @@ def generate_tree_v(vs, tree_es, n):
 
     i = len(tree) - len(vs) - 1
 
+    # v =   vL ** er * vR ** el % n
     while i >= 0:
         left = 2*i + 1
         right = 2*i + 2
@@ -52,12 +63,18 @@ def generate_tree_v(vs, tree_es, n):
     return tree
 
 
+# PERCOLATE DOWN
+# Generate root tree to find messages in leaves
 def generate_r(tree_es, tree_vs, n, r):
     n = int(n)
 
+    # Full binary tree
     i = 0
     tree = [r, *[0 for _ in range(len(tree_vs)-1)]]
 
+    # Algorithm wrong in paper
+    # t = 0 mod El and t = 1 mod ER and solving t using crt
+    # rR = r**t / vL ** tL * vR ** tr % n
     while 2*i + 2 < len(tree):
         r = tree[i]
         left = 2*i + 1
@@ -74,6 +91,8 @@ def generate_r(tree_es, tree_vs, n, r):
     return tree
 
 
+# Testing function
+# Run only from main driver
 def main(primes, es, message):
 
     phi = 1
